@@ -1,0 +1,53 @@
+opentelemetry-collector:
+  extraEnvsFrom:
+    - secretRef:
+        name: dd-secrets
+  config:
+    extensions:
+      datadog/extension:
+        api:
+          site: ${env:DD_SITE_PARAMETER}
+          key: ${env:DD_API_KEY}
+        http:
+          endpoint: "localhost:9875"
+          path: "/metadata"
+    exporters:
+      datadog:
+        traces:
+          compute_stats_by_span_kind: true
+          trace_buffer: 500
+        hostname: "otelcol-helm"
+        api:
+          site: ${env:DD_SITE_PARAMETER}
+          key: ${env:DD_API_KEY}
+        sending_queue:
+          batch:
+            min_size: 10
+            max_size: 100
+            flush_timeout: 10s
+
+    processors:
+      resource:
+        attributes:
+          - key: deployment.environment.name
+            value: "otel"
+            action: upsert
+
+    connectors:
+      datadog/connector:
+        traces:
+          compute_stats_by_span_kind: true
+
+    service:
+      extensions: [health_check, datadog/extension]
+      pipelines:
+        traces:
+          processors: [memory_limiter, resource, resourcedetection, transform]
+          exporters: [otlp/jaeger, debug, spanmetrics, datadog, datadog/connector]
+        metrics:
+          receivers: [datadog/connector, otlp, spanmetrics]
+          processors: [memory_limiter, resource, resourcedetection, transform]
+          exporters: [otlphttp/prometheus, debug, datadog]
+        logs:
+          processors: [memory_limiter, resource, resourcedetection, transform]
+          exporters: [opensearch, debug, datadog]
