@@ -137,27 +137,27 @@ static_resources:
           "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
           explicit_http_config:
             http2_protocol_options: {}
-      load_assignment:
-        cluster_name: opentelemetry_collector_grpc
-        endpoints:
-          - lb_endpoints:
-              - endpoint:
-                  address:
-                    socket_address:
-                      address: ${OTEL_COLLECTOR_HOST}
-                      port_value: ${OTEL_COLLECTOR_PORT_GRPC}
-    - name: opentelemetry_collector_http
-      type: STRICT_DNS
-      lb_policy: ROUND_ROBIN
-      load_assignment:
-        cluster_name: opentelemetry_collector_http
-        endpoints:
-          - lb_endpoints:
-              - endpoint:
-                  address:
-                    socket_address:
-                      address: ${OTEL_COLLECTOR_HOST}
-                      port_value: ${OTEL_COLLECTOR_PORT_HTTP}
+      # load_assignment:
+      #   cluster_name: opentelemetry_collector_grpc
+      #   endpoints:
+      #     - lb_endpoints:
+      #         - endpoint:
+      #             address:
+      #               socket_address:
+      #                 address: ${OTEL_COLLECTOR_HOST}
+      #                 port_value: ${OTEL_COLLECTOR_PORT_GRPC}
+    # - name: opentelemetry_collector_http
+    #   type: STRICT_DNS
+    #   lb_policy: ROUND_ROBIN
+    #   load_assignment:
+    #     cluster_name: opentelemetry_collector_http
+    #     endpoints:
+    #       - lb_endpoints:
+    #           - endpoint:
+    #               address:
+    #                 socket_address:
+    #                   address: ${OTEL_COLLECTOR_HOST}
+    #                   port_value: ${OTEL_COLLECTOR_PORT_HTTP}
     - name: frontend
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN

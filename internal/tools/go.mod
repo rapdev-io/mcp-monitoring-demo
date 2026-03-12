@@ -1,4 +1,4 @@
-module github.com/open-telemetry/opentelemetry-specification/internal/tools
+// module github.com/open-telemetry/opentelemetry-specification/internal/tools
 
 go 1.12
 

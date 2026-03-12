@@ -3,9 +3,10 @@
 
 import Document, { DocumentContext, Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
-import {context, propagation} from "@opentelemetry/api";
+// import {context, propagation} from "@opentelemetry/api";
 
-const { ENV_PLATFORM, WEB_OTEL_SERVICE_NAME, PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT, OTEL_COLLECTOR_HOST} = process.env;
+// const { ENV_PLATFORM, WEB_OTEL_SERVICE_NAME, PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT, OTEL_COLLECTOR_HOST} = process.env;
+const { ENV_PLATFORM, WEB_OTEL_SERVICE_NAME } = process.env;
 
 export default class MyDocument extends Document<{ envString: string }> {
   static async getInitialProps(ctx: DocumentContext) {
@@ -19,7 +20,7 @@ export default class MyDocument extends Document<{ envString: string }> {
         });
 
       const initialProps = await Document.getInitialProps(ctx);
-      const baggage = propagation.getBaggage(context.active());
+      // const baggage = propagation.getBaggage(context.active());
       const isSyntheticRequest = baggage?.getEntry('synthetic_request')?.value === 'true';
 
       // const otlpTracesEndpoint = isSyntheticRequest

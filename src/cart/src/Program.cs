@@ -18,14 +18,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
-using OpenTelemetry.Instrumentation.StackExchangeRedis;
-using OpenTelemetry.Logs;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
-using OpenFeature;
-using OpenFeature.Hooks;
-using OpenFeature.Contrib.Providers.Flagd;
+// using OpenTelemetry.Instrumentation.StackExchangeRedis;
+// using OpenTelemetry.Logs;
+// using OpenTelemetry.Metrics;
+// using OpenTelemetry.Resources;
+// using OpenTelemetry.Trace;
+// using OpenFeature;
+// using OpenFeature.Hooks;
+// using OpenFeature.Contrib.Providers.Flagd;
 
 var builder = WebApplication.CreateBuilder(args);
 string valkeyAddress = builder.Configuration["VALKEY_ADDR"];
@@ -36,7 +36,7 @@ if (string.IsNullOrEmpty(valkeyAddress))
 }
 
 builder.Logging
-    .AddOpenTelemetry(options => options.AddOtlpExporter())
+    // .AddOpenTelemetry(options => options.AddOtlpExporter())
     .AddConsole();
 
 builder.Services.AddSingleton<ICartStore>(x =>
@@ -71,25 +71,25 @@ Action<ResourceBuilder> appResourceBuilder =
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(appResourceBuilder)
     .WithTracing(tracerBuilder => tracerBuilder
-        .AddSource("OpenTelemetry.Demo.Cart")
+        // .AddSource("OpenTelemetry.Demo.Cart")
         .AddRedisInstrumentation(
             options => options.SetVerboseDatabaseStatements = true)
         .AddAspNetCoreInstrumentation()
         .AddGrpcClientInstrumentation()
-        .AddHttpClientInstrumentation()
-        .AddOtlpExporter())
+        .AddHttpClientInstrumentation())
+        // .AddOtlpExporter())
     .WithMetrics(meterBuilder => meterBuilder
-        .AddMeter("OpenTelemetry.Demo.Cart")
+        // .AddMeter("OpenTelemetry.Demo.Cart")
         .AddMeter("OpenFeature")
         .AddProcessInstrumentation()
         .AddRuntimeInstrumentation()
         .AddAspNetCoreInstrumentation()
-        .SetExemplarFilter(ExemplarFilterType.TraceBased)
-        .AddOtlpExporter());
+        .SetExemplarFilter(ExemplarFilterType.TraceBased));
+        // .AddOtlpExporter());
 builder.Services.AddGrpc();
 builder.Services.AddSingleton<readinessCheck>();
-builder.Services.AddGrpcHealthChecks()
-    .AddCheck<readinessCheck>("oteldemo.CartService");
+builder.Services.AddGrpcHealthChecks();
+    // .AddCheck<readinessCheck>("oteldemo.CartService");
 
 builder.Services.AddSingleton<HealthServiceImpl>();
 
