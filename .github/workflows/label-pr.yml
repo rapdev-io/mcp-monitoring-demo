@@ -34,7 +34,7 @@ jobs:
               - 'src/flagd/**'
               - 'src/grafana/**'
               - 'src/jaeger/**'
-              - 'src/otel-collector/**'
+              # - 'src/otel-collector/**'
               - 'src/postgresql/**'
               - 'src/prometheus/**'
 

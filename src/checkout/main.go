@@ -18,32 +18,33 @@ import (
 	"syscall"
 	"time"
 
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/log/global"
-	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
-	"go.opentelemetry.io/otel/trace"
+	// "go.opentelemetry.io/otel/attribute"
+	// "go.opentelemetry.io/otel/log/global"
+	// semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
+	// "go.opentelemetry.io/otel/trace"
 
 	"github.com/IBM/sarama"
 	"github.com/google/uuid"
-	otelhooks "github.com/open-feature/go-sdk-contrib/hooks/open-telemetry/pkg"
+
+	// otelhooks "github.com/open-feature/go-sdk-contrib/hooks/open-telemetry/pkg"
 	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
 	"github.com/open-feature/go-sdk/openfeature"
 
-	"go.opentelemetry.io/contrib/bridges/otelslog"
-	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
-	"go.opentelemetry.io/contrib/instrumentation/runtime"
-	"go.opentelemetry.io/otel"
-	otelcodes "go.opentelemetry.io/otel/codes"
-	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
-	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
-	"go.opentelemetry.io/otel/propagation"
+	// "go.opentelemetry.io/contrib/bridges/otelslog"
+	// "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	// "go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	// "go.opentelemetry.io/contrib/instrumentation/runtime"
+	// "go.opentelemetry.io/otel"
+	// otelcodes "go.opentelemetry.io/otel/codes"
+	// "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
+	// "go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
+	// "go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	// "go.opentelemetry.io/otel/propagation"
 
-	sdklog "go.opentelemetry.io/otel/sdk/log"
-	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
-	sdkresource "go.opentelemetry.io/otel/sdk/resource"
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	// sdklog "go.opentelemetry.io/otel/sdk/log"
+	// sdkmetric "go.opentelemetry.io/otel/sdk/metric"
+	// sdkresource "go.opentelemetry.io/otel/sdk/resource"
+	// sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -95,8 +96,8 @@ func initTracerProvider() *sdktrace.TracerProvider {
 		sdktrace.WithBatcher(exporter),
 		sdktrace.WithResource(initResource()),
 	)
-	otel.SetTracerProvider(tp)
-	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
+	// otel.SetTracerProvider(tp)
+	// otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 	return tp
 }
 
@@ -112,7 +113,7 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)),
 		sdkmetric.WithResource(initResource()),
 	)
-	otel.SetMeterProvider(mp)
+	// otel.SetMeterProvider(mp)
 	return mp
 }
 
@@ -179,7 +180,7 @@ func main() {
 	// this *must* be called after the logger provider is initialized
 	// otherwise the Sarama producer in kafka/producer.go will not be
 	// able to log properly
-	logger = otelslog.NewLogger("checkout")
+	// logger = otelslog.NewLogger("checkout")
 	slog.SetDefault(logger)
 
 	err := runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
@@ -193,13 +194,13 @@ func main() {
 	}
 
 	openfeature.SetProvider(provider)
-	openfeature.AddHooks(otelhooks.NewTracesHook())
+	// openfeature.AddHooks(otelhooks.NewTracesHook())
 
 	tracer = tp.Tracer("checkout")
 
 	svc := new(checkout)
 	svc.httpClient = &http.Client{
-		Transport: otelhttp.NewTransport(http.DefaultTransport),
+		// Transport: otelhttp.NewTransport(http.DefaultTransport),
 	}
 
 	mustMapEnv(&svc.shippingSvcAddr, "SHIPPING_ADDR")
@@ -249,7 +250,7 @@ func main() {
 	}
 
 	var srv = grpc.NewServer(
-		grpc.StatsHandler(otelgrpc.NewServerHandler()),
+	// grpc.StatsHandler(otelgrpc.NewServerHandler()),
 	)
 	pb.RegisterCheckoutServiceServer(srv, svc)
 
@@ -446,7 +447,7 @@ func (cs *checkout) prepareOrderItemsAndShippingQuoteFromCart(ctx context.Contex
 func mustCreateClient(svcAddr string) *grpc.ClientConn {
 	c, err := grpc.NewClient(svcAddr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
+		// grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 	)
 	if err != nil {
 		logger.Error(fmt.Sprintf("could not connect to %s service, err: %+v", svcAddr, err))
@@ -660,14 +661,14 @@ func (cs *checkout) sendToPostProcessor(ctx context.Context, result *pb.OrderRes
 				attribute.Bool("messaging.kafka.producer.success", false),
 				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
 			)
-			span.SetStatus(otelcodes.Error, errMsg.Err.Error())
+			// span.SetStatus(otelcodes.Error, errMsg.Err.Error())
 			logger.Error(fmt.Sprintf("Failed to write message: %v", errMsg.Err))
 		case <-ctx.Done():
 			span.SetAttributes(
 				attribute.Bool("messaging.kafka.producer.success", false),
 				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
 			)
-			span.SetStatus(otelcodes.Error, "Context cancelled: "+ctx.Err().Error())
+			// span.SetStatus(otelcodes.Error, "Context cancelled: "+ctx.Err().Error())
 			logger.Warn(fmt.Sprintf("Context canceled before success message received: %v", ctx.Err()))
 		}
 	case <-ctx.Done():
@@ -675,7 +676,7 @@ func (cs *checkout) sendToPostProcessor(ctx context.Context, result *pb.OrderRes
 			attribute.Bool("messaging.kafka.producer.success", false),
 			attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
 		)
-		span.SetStatus(otelcodes.Error, "Failed to send: "+ctx.Err().Error())
+		// span.SetStatus(otelcodes.Error, "Failed to send: "+ctx.Err().Error())
 		logger.Error(fmt.Sprintf("Failed to send message to Kafka within context deadline: %v", ctx.Err()))
 		return
 	}
@@ -709,7 +710,7 @@ func createProducerSpan(ctx context.Context, msg *sarama.ProducerMessage) trace.
 	)
 
 	carrier := propagation.MapCarrier{}
-	propagator := otel.GetTextMapPropagator()
+	// propagator := otel.GetTextMapPropagator()
 	propagator.Inject(spanContext, carrier)
 
 	for key, value := range carrier {

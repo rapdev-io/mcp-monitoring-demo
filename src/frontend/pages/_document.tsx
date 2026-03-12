@@ -29,8 +29,8 @@ export default class MyDocument extends Document<{ envString: string }> {
       const envString = `
         window.ENV = {
           NEXT_PUBLIC_PLATFORM: '${ENV_PLATFORM}',
-          NEXT_PUBLIC_OTEL_SERVICE_NAME: '${WEB_OTEL_SERVICE_NAME}',
-          NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${otlpTracesEndpoint}',
+          // NEXT_PUBLIC_OTEL_SERVICE_NAME: '${WEB_OTEL_SERVICE_NAME}',
+          // NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${otlpTracesEndpoint}',
           IS_SYNTHETIC_REQUEST: '${isSyntheticRequest}',
         };`;
       return {

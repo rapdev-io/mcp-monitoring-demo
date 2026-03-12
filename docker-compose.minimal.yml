@@ -28,7 +28,7 @@ services:
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-ad
       args:
-        OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
+        # OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
     deploy:
       resources:
         limits:
@@ -47,9 +47,9 @@ services:
       # - OTEL_SERVICE_NAME=ad
       # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
       - _JAVA_OPTIONS
-    depends_on:
-      otel-collector:
-        condition: service_started
+    # depends_on:
+      # otel-collector:
+      #   condition: service_started
     logging: *logging
 
   # Cart service
@@ -81,8 +81,8 @@ services:
     depends_on:
       valkey-cart:
         condition: service_started
-      otel-collector:
-        condition: service_started
+      # otel-collector:
+      #   condition: service_started
     logging: *logging
 
   # Checkout service
@@ -129,8 +129,8 @@ services:
         condition: service_started
       shipping:
         condition: service_started
-      otel-collector:
-        condition: service_started
+      # otel-collector:
+      #   condition: service_started
     logging: *logging
 
   # Currency service
@@ -159,9 +159,9 @@ services:
       # - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       # - OTEL_RESOURCE_ATTRIBUTES
       # - OTEL_SERVICE_NAME=currency
-    depends_on:
-      otel-collector:
-        condition: service_started
+    # depends_on:
+      # otel-collector:
+      #   condition: service_started
     logging: *logging
 
   # Email service
@@ -188,9 +188,9 @@ services:
       # - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       # - OTEL_RESOURCE_ATTRIBUTES
       # - OTEL_SERVICE_NAME=email
-    depends_on:
-      otel-collector:
-        condition: service_started
+    # depends_on:
+      # otel-collector:
+      #   condition: service_started
     logging: *logging
 
   # Frontend
@@ -223,10 +223,10 @@ services:
       # - OTEL_RESOURCE_ATTRIBUTES
       - ENV_PLATFORM
       # - OTEL_SERVICE_NAME=frontend
-      - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      # - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       # - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - WEB_OTEL_SERVICE_NAME=frontend-web
-      - OTEL_COLLECTOR_HOST
+      # - WEB_OTEL_SERVICE_NAME=frontend-web
+      # - OTEL_COLLECTOR_HOST
       - FLAGD_HOST
       - FLAGD_PORT
     depends_on:
@@ -246,8 +246,8 @@ services:
         condition: service_started
       shipping:
         condition: service_started
-      otel-collector:
-        condition: service_started
+      # otel-collector:
+      #   condition: service_started
       image-provider:
         condition: service_started
     logging: *logging
@@ -276,11 +276,11 @@ services:
       - GRAFANA_HOST
       - JAEGER_UI_PORT
       - JAEGER_HOST
-      - OTEL_COLLECTOR_HOST
+      # - OTEL_COLLECTOR_HOST
       - IMAGE_PROVIDER_HOST
       - IMAGE_PROVIDER_PORT
-      - OTEL_COLLECTOR_PORT_GRPC
-      - OTEL_COLLECTOR_PORT_HTTP
+      # - OTEL_COLLECTOR_PORT_GRPC
+      # - OTEL_COLLECTOR_PORT_HTTP
       # - OTEL_RESOURCE_ATTRIBUTES
       # - OTEL_SERVICE_NAME=frontend-proxy
       - ENVOY_PORT
@@ -319,13 +319,13 @@ services:
       - "${IMAGE_PROVIDER_PORT}"
     environment:
       - IMAGE_PROVIDER_PORT
-      - OTEL_COLLECTOR_HOST
-      - OTEL_COLLECTOR_PORT_GRPC
+      # - OTEL_COLLECTOR_HOST
+      # - OTEL_COLLECTOR_PORT_GRPC
       # - OTEL_RESOURCE_ATTRIBUTES
       # - OTEL_SERVICE_NAME=image-provider
-    depends_on:
-      otel-collector:
-        condition: service_started
+    # depends_on:
+    #   otel-collector:
+    #     condition: service_started
     logging: *logging
 
   # Load Generator
@@ -393,8 +393,8 @@ services:
       # - OTEL_RESOURCE_ATTRIBUTES
       # - OTEL_SERVICE_NAME=payment
     depends_on:
-      otel-collector:
-        condition: service_started
+      # otel-collector:
+        # condition: service_started
     logging: *logging
 
   # Product Catalog service
@@ -423,16 +423,16 @@ services:
       # - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       # - OTEL_RESOURCE_ATTRIBUTES
       # - OTEL_SERVICE_NAME=product-catalog
-      - OTEL_EXPERIMENTAL_CONFIG_FILE=/otel-config.yml
-      - OTEL_SEMCONV_STABILITY_OPT_IN=database
+      # - OTEL_EXPERIMENTAL_CONFIG_FILE=/otel-config.yml
+      # - OTEL_SEMCONV_STABILITY_OPT_IN=database
       - DB_CONNECTION_STRING=postgres://otelu:otelp@${POSTGRES_HOST}/${POSTGRES_DB}?sslmode=disable
     depends_on:
-      otel-collector:
-        condition: service_started
+      # otel-collector:
+      #   condition: service_started
       postgresql:
         condition: service_started
-    volumes:
-      - ./otel-config.yml:/otel-config.yml
+    # volumes:
+    #   - ./otel-config.yml:/otel-config.yml
     logging: *logging
 
   # Product reviews service
@@ -453,12 +453,12 @@ services:
       - "${PRODUCT_REVIEWS_PORT}"
     environment:
       - PRODUCT_REVIEWS_PORT
-      - OTEL_PYTHON_LOG_CORRELATION=true
+      # - OTEL_PYTHON_LOG_CORRELATION=true
       # - OTEL_EXPORTER_OTLP_ENDPOINT
       # - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       # - OTEL_RESOURCE_ATTRIBUTES
       # - OTEL_SERVICE_NAME=product-reviews
-      - OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
+      # - OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
       - DB_CONNECTION_STRING=host=${POSTGRES_HOST} user=otelu password=otelp dbname=${POSTGRES_DB}
       - LLM_BASE_URL
@@ -474,8 +474,8 @@ services:
         condition: service_started
       postgresql:
         condition: service_started
-      otel-collector:
-        condition: service_started
+      # otel-collector:
+      #   condition: service_started
     logging: *logging
 
   # Quote service
@@ -498,14 +498,14 @@ services:
       - IPV6_ENABLED
       # - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       # - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_PHP_AUTOLOAD_ENABLED=true
+      # - OTEL_PHP_AUTOLOAD_ENABLED=true
       - QUOTE_PORT
-      - OTEL_PHP_INTERNAL_METRICS_ENABLED=true
+      # - OTEL_PHP_INTERNAL_METRICS_ENABLED=true
       # - OTEL_RESOURCE_ATTRIBUTES
       # - OTEL_SERVICE_NAME=quote
-    depends_on:
-      otel-collector:
-        condition: service_started
+    # depends_on:
+    #   otel-collector:
+    #     condition: service_started
     logging: *logging
 
   # Recommendation service
@@ -529,7 +529,7 @@ services:
       - FLAGD_PORT
       - RECOMMENDATION_PORT
       - PRODUCT_CATALOG_ADDR
-      - OTEL_PYTHON_LOG_CORRELATION=true
+      # - OTEL_PYTHON_LOG_CORRELATION=true
       # - OTEL_EXPORTER_OTLP_ENDPOINT
       # - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       # - OTEL_RESOURCE_ATTRIBUTES
@@ -538,8 +538,8 @@ services:
     depends_on:
       product-catalog:
         condition: service_started
-      otel-collector:
-        condition: service_started
+      # otel-collector:
+      #   condition: service_started
     logging: *logging
 
   # Shipping service
@@ -572,9 +572,9 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
-    depends_on:
-      otel-collector:
-        condition: service_started
+    # depends_on:
+    #   otel-collector:
+    #     condition: service_started
     logging: *logging
 
   # ******************
@@ -589,8 +589,8 @@ services:
         limits:
           memory: 75M
     environment:
-      - FLAGD_OTEL_COLLECTOR_URI=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
-      - FLAGD_METRICS_EXPORTER=otel
+      # - FLAGD_OTEL_COLLECTOR_URI=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      # - FLAGD_METRICS_EXPORTER=otel
       - GOMEMLIMIT=60MiB
       # - OTEL_RESOURCE_ATTRIBUTES
       # - OTEL_SERVICE_NAME=flagd
@@ -683,8 +683,8 @@ services:
       - JAEGER_HOST
       - JAEGER_GRPC_PORT
       - PROMETHEUS_ADDR
-      - OTEL_COLLECTOR_HOST
-      - OTEL_COLLECTOR_PORT_HTTP
+      # - OTEL_COLLECTOR_HOST
+      # - OTEL_COLLECTOR_PORT_HTTP
       - MEMORY_MAX_TRACES=5000
     volumes:
       - ./src/jaeger/config.yml:/etc/jaeger/config.yml
@@ -709,42 +709,42 @@ services:
     logging: *logging
 
   # OpenTelemetry Collector
-  otel-collector:
-    image: ${COLLECTOR_CONTRIB_IMAGE}
-    container_name: otel-collector
-    deploy:
-      resources:
-        limits:
-          memory: 200M
-    restart: unless-stopped
-    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
-    user: 0:0
-    volumes:
-      - ${HOST_FILESYSTEM}:/hostfs:ro
-      - ${DOCKER_SOCK}:/var/run/docker.sock:ro
-      - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
-      - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
-    ports:
-      - "${OTEL_COLLECTOR_PORT_GRPC}"
-      - "${OTEL_COLLECTOR_PORT_HTTP}"
-    depends_on:
-      jaeger:
-        condition: service_started
-      opensearch:
-        condition: service_healthy
-    logging: *logging
-    environment:
-      - FRONTEND_PROXY_ADDR
-      - IMAGE_PROVIDER_HOST
-      - IMAGE_PROVIDER_PORT
-      - HOST_FILESYSTEM
-      - OTEL_COLLECTOR_HOST
-      - OTEL_COLLECTOR_PORT_GRPC
-      - OTEL_COLLECTOR_PORT_HTTP
-      - POSTGRES_HOST
-      - POSTGRES_PORT
-      - POSTGRES_PASSWORD
-      - GOMEMLIMIT=160MiB
+  # otel-collector:
+  #   image: ${COLLECTOR_CONTRIB_IMAGE}
+  #   container_name: otel-collector
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 200M
+  #   restart: unless-stopped
+  #   command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
+  #   user: 0:0
+  #   volumes:
+  #     - ${HOST_FILESYSTEM}:/hostfs:ro
+  #     - ${DOCKER_SOCK}:/var/run/docker.sock:ro
+  #     - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
+  #     - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
+  #   ports:
+  #     - "${OTEL_COLLECTOR_PORT_GRPC}"
+  #     - "${OTEL_COLLECTOR_PORT_HTTP}"
+  #   depends_on:
+  #     jaeger:
+  #       condition: service_started
+  #     opensearch:
+  #       condition: service_healthy
+  #   logging: *logging
+  #   environment:
+  #     - FRONTEND_PROXY_ADDR
+  #     - IMAGE_PROVIDER_HOST
+  #     - IMAGE_PROVIDER_PORT
+  #     - HOST_FILESYSTEM
+  #     - OTEL_COLLECTOR_HOST
+  #     - OTEL_COLLECTOR_PORT_GRPC
+  #     - OTEL_COLLECTOR_PORT_HTTP
+  #     - POSTGRES_HOST
+  #     - POSTGRES_PORT
+  #     - POSTGRES_PASSWORD
+  #     - GOMEMLIMIT=160MiB
 
   # Prometheus
   prometheus:
