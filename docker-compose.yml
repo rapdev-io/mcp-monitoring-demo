@@ -55,7 +55,7 @@ services:
       dockerfile: ${AD_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-ad
-      args:
+      # args:
         # OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
     deploy:
       resources:
@@ -179,8 +179,8 @@ services:
       dockerfile: ${CURRENCY_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-currency
-      args:
-        OPENTELEMETRY_CPP_VERSION: ${OPENTELEMETRY_CPP_VERSION}
+      # args:
+      #   OPENTELEMETRY_CPP_VERSION: ${OPENTELEMETRY_CPP_VERSION}
     deploy:
       resources:
         limits:
@@ -240,7 +240,7 @@ services:
       dockerfile: ${FRAUD_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-fraud-detection
-      args:
+      # args:
         # OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
     deploy:
       resources:
@@ -401,7 +401,7 @@ services:
       # - OTEL_COLLECTOR_PORT_GRPC
       # - OTEL_RESOURCE_ATTRIBUTES
       # - OTEL_SERVICE_NAME=image-provider
-    depends_on:
+    # depends_on:
       # otel-collector:
         # condition: service_started
     logging: *logging
@@ -586,7 +586,7 @@ services:
       # - OTEL_PHP_INTERNAL_METRICS_ENABLED=true
       # - OTEL_RESOURCE_ATTRIBUTES
       # - OTEL_SERVICE_NAME=quote
-    depends_on:
+    # depends_on:
       # otel-collector:
         # condition: service_started
     logging: *logging
@@ -728,7 +728,7 @@ services:
       dockerfile: ${KAFKA_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-kafka
-      args:
+      # args:
         # OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
     deploy:
       resources:
