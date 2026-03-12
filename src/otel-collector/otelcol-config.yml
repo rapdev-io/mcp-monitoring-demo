@@ -51,6 +51,7 @@ receivers:
     collection_interval: 10s
   # Host metrics
   hostmetrics:
+    collection_interval: 10s
     root_path: /hostfs
     scrapers:
       cpu:
@@ -109,6 +110,8 @@ receivers:
         metrics:
           system.paging.usage:
             enabled: true
+          system.paging.utilization:
+            enabled: true
 
       processes:
       process:
@@ -152,6 +155,22 @@ processors:
     spike_limit_percentage: 25
   resourcedetection:
     detectors: [env, docker, system]
+    system:
+      hostname_sources: [os]
+  transform:
+    metric_statements:
+      - context: resource
+        statements:
+          - set(attributes["datadog.host.use_as_metadata"], true)
+    trace_statements:
+      - context: resource
+        statements:
+          - set(attributes["datadog.host.use_as_metadata"], true)
+    log_statements:
+      - context: resource
+        statements:
+          - set(attributes["datadog.host.use_as_metadata"], true)
+
   transform/sanitize_spans:
     error_mode: ignore
     trace_statements:
@@ -197,6 +216,9 @@ processors:
 
           # SANITIZE ALL SPAN NAMES TO PREVENT CARDINALITY EXPLOSION
           - set_semconv_span_name("1.37.0", "original_span_name")
+          
+          # Datadog
+          - set(kind.string, "Client") where kind.string == "Internal" and attributes["http.path"] == "/health"
 
 connectors:
   spanmetrics:
@@ -210,7 +232,7 @@ service:
     metrics:
       receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
       processors: [resourcedetection, memory_limiter]
-      exporters: [otlp_http/prometheus, debug]
+      exporters: [otlp_http/prometheus, debug, datadog]
     logs:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter]

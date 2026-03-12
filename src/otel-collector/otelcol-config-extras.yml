@@ -16,3 +16,72 @@
 #    pipelines:
 #      traces:
 #        exporters: [spanmetrics, otlp_http/example]
+
+extensions:
+  datadog/extension:
+    api:
+      site: ${env:DD_SITE_PARAMETER}
+      key: ${env:DD_API_KEY}
+    http:
+      endpoint: "localhost:9875"
+      path: "/metadata"
+
+exporters:
+  datadog:
+    traces:
+      compute_stats_by_span_kind: true
+      trace_buffer: 500
+    api:
+      site: ${env:DD_SITE_PARAMETER}
+      key: ${env:DD_API_KEY}
+    sending_queue:
+      batch:
+        min_size: 10
+        max_size: 100
+        flush_timeout: 10s
+    metrics:
+      # Add all resource attributes as tags for metrics
+      resource_attributes_as_tags: true
+
+processors:
+  resource:
+    attributes:
+      - key: deployment.environment.name
+        value: "otel"
+        action: upsert
+  transform:
+    metric_statements:
+      - context: resource
+        statements:
+          - set(attributes["datadog.host.use_as_metadata"], true)
+    trace_statements:
+      - context: resource
+        statements:
+          - set(attributes["datadog.host.use_as_metadata"], true)
+    log_statements:
+      - context: resource
+        statements:
+          - set(attributes["datadog.host.use_as_metadata"], true)
+
+
+connectors:
+  datadog/connector:
+    traces:
+      compute_stats_by_span_kind: true
+
+service:
+  extensions: [datadog/extension]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [resourcedetection, memory_limiter, resource, transform/sanitize_spans]
+      exporters: [otlp_grpc/jaeger, debug, spanmetrics, datadog, datadog/connector]
+    metrics:
+      receivers: [datadog/connector, docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
+      processors: [resourcedetection, memory_limiter, resource]
+      exporters: [otlp_http/prometheus, debug, datadog]
+    logs:
+      receivers: [otlp]
+      processors: [resourcedetection, memory_limiter, resource]
+      exporters: [opensearch, debug, datadog]
+
