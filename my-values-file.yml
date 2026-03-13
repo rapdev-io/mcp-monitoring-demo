@@ -2,6 +2,16 @@ opentelemetry-collector:
   extraEnvsFrom:
     - secretRef:
         name: dd-secrets
+    - name: HOST_IP
+      valueFrom:
+      fieldRef:
+          fieldPath: status.hostIP
+    - name: OTLP_GRPC_PORT
+      value: "4317"
+    - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      value: 'http://$(HOST_IP):$(OTLP_GRPC_PORT)'
+    - name: OTEL_EXPORTER_OTLP_PROTOCOL
+      value: 'grpc'
   config:
     extensions:
       datadog/extension:
