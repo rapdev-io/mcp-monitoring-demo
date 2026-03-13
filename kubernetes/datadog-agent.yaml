@@ -4,7 +4,7 @@ metadata:
   name: "datadog"
 spec:
   global:
-    clusterName: "your-cluster-name-here"
+    clusterName: "demo-otel-cluster"
     site: "datadoghq.com"
     credentials:
       apiSecret:
